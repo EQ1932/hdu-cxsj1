@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Management</title>
+</head>
+<body>
+    <h2>Your Book List</h2>
+
+    <!-- 显示昵称和性别，点击昵称跳转到用户信息修改页面 -->
+    <div style="text-align:right;">
+        <span>Welcome, <a href="/edit_profile/{{ user_id }}">{{ nickname }}</a> ({{ gender }})</span>
+    </div>
+
+    <!-- 添加书籍链接 -->
+    <a href="/add_book/{{ user_id }}">Add Book</a>
+
+    <!-- 搜索框 -->
+    <form method="GET" action="{{ url_for('book_management', user_id=user_id) }}">
+        <label for="search">Search: </label>
+        <input type="text" id="search" name="search" value="{{ search_query }}" placeholder="Search by title or description">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- 书籍列表 -->
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>Book ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Publisher</th>
+            <th>Description</th>
+            <th>Cover</th>
+            <th>Actions</th>
+        </tr>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.book_id }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.publisher }}</td>
+            <td>{{ book.description }}</td>
+            <td>
+                <img src="{{ url_for('static', filename='images/' + book.cover_image) }}" width="50" height="50">
+            </td>
+            <td>
+                <!-- 编辑按钮 -->
+                <a href="/edit_book/{{ user_id }}/{{ book.book_id }}">Edit</a> |
+                <!-- 删除按钮 -->
+                <form action="/delete_book/{{ user_id }}/{{ book.book_id }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- 分页按钮 -->
+    <div style="text-align:center;">
+        {% if page > 1 %}
+        <a href="{{ url_for('book_management', user_id=user_id, page=page-1, search=search_query) }}">Previous</a>
+        {% endif %}
+        <span> Page {{ page }} of {{ total_pages }} </span>
+        {% if page < total_pages %}
+        <a href="{{ url_for('book_management', user_id=user_id, page=page+1, search=search_query) }}">Next</a>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
